@@ -42,9 +42,7 @@ public class Client {
                 output.writeObject(messageTest);
                 output.flush();
 
-                // messageTest = (String) input.readObject();
-                // System.out.println("Server>> " + messageTest);
-
+              
             } while (!messageTest.equals("SAIR"));
             output.close();
             input.close();
