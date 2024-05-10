@@ -3,6 +3,9 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Scanner;
+
+import model.ChatRoom;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -29,14 +32,53 @@ public class Client {
         }
     }
 
-    public void sendMessage() {
+    public void clientFunction() {
         try {
             bufferedWriter.write(username);
             bufferedWriter.newLine();
             bufferedWriter.flush();
             Scanner scanner = new Scanner(System.in);
             while (clientSocket.isConnected()) {
+                System.out.println("Select Operation: ");
+                System.out.println("[ 1 ] Create New Chat Room");
+                System.out.println("[ 2 ] Enter New Chat Room");
+                System.out.println("[ 3 ] List All Chat Rooms");
+                System.out.println("[ 4 ] Send Messages");
+                System.out.println("[ 5 ] Exit Chat Room");
+                System.out.println("[ 6 ] Close Chat Room");
+                System.out.println("[ 7 ] Ban User");
+                System.out.println("[ 8 ] Exit");
                 String messageToSend = scanner.nextLine();
+                switch (messageToSend) {
+                    case "1":
+                        createNew();
+                        break;
+                    case "2":
+                        enterChatRoom();
+                        break;
+                    case "3":
+                        listAllChatRooms();
+                        break;
+                    case "4":
+                        sendMessage();
+                        break;
+                    case "5":
+                        exitChatRoom();
+                        break;
+                    case "6":
+                        closeChatRoom();
+                        break;
+                    case "7":
+                        banUser();
+                        break;
+                    case "8":
+                        closeEverything(clientSocket, bufferedReader, bufferedWriter);
+
+                    default:
+                        System.out.println("Invalid option. Please try again.");
+                        break;
+                }
+
                 bufferedWriter.write(username + ": " + messageToSend);
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
@@ -80,6 +122,65 @@ public class Client {
         }
     }
 
+    public void createNew() {
+        if (!username.equals("")) {
+            System.out.println("User not Registered ");
+            return;
+        }
+
+        try {
+
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Enter Chat Room Name: ");
+            String chatRoomName = scanner.nextLine();
+            System.out.println("Enter Chat Room Type");
+            System.out.println("[ 1 ] Public");
+            System.out.println("[ 2 ] Private");
+            String roomType;
+            switch (roomType = scanner.nextLine()) {
+                case "1":
+                    bufferedWriter.write("CRIAR_SALA " + "<PUBLICA> <" + chatRoomName + ">");
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
+                    break;
+
+                case "2":
+                    bufferedWriter.write("CRIAR_SALA " + "<PRIVADA> <" + chatRoomName + ">");
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+    }
+
+    public void enterChatRoom() {
+
+    }
+
+    public void listAllChatRooms() {
+
+    }
+
+    public void sendMessage() {
+
+    }
+
+    public void exitChatRoom() {
+
+    }
+
+    public void closeChatRoom() {
+
+    }
+
+    public void banUser() {
+
+    }
+
     // public void start() {
     // System.out.println("Client started. Port : " + this.clientSocket.getPort());
     // ObjectOutputStream output;
@@ -116,11 +217,11 @@ public class Client {
 
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter username: ");
+
         String username = scanner.nextLine();
         Socket clientSocket = new Socket("localhost", 8080);
         Client client = new Client(clientSocket, username);
         client.listenForMessage();
-        client.sendMessage();
+        client.clientFunction();
     }
 }
