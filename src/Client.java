@@ -185,7 +185,7 @@ public class Client {
     }
 
     public void exitChatRoom() {
-
+        
     }
     
     public void closeChatRoom() {
