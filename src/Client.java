@@ -180,8 +180,15 @@ public class Client {
         bufferedWriter.flush();
     }
 
-    public void sendMessage() {
-
+    public void sendMessage() throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Choose Chat Room:");
+        String chatRoomName = scanner.nextLine();
+        System.out.print("Enter Message:");
+        String message = scanner.nextLine();
+        bufferedWriter.write("ENVIAR_MENSAGEM " + chatRoomName + " " + message);
+        bufferedWriter.newLine();
+        bufferedWriter.flush();
     }
 
     public void exitChatRoom() {
