@@ -37,7 +37,6 @@ public class Client {
             bufferedWriter.newLine();
             bufferedWriter.flush();
             Scanner scanner = new Scanner(System.in);
-            System.out.println("okoko");
             System.out.println("Welcome " + this.username);
             while (clientSocket.isConnected()) {
                 System.out.println("Select Operation: ");
