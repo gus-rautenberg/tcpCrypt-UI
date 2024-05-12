@@ -184,12 +184,25 @@ public class Client {
 
     }
 
-    public void exitChatRoom() {
+    public void exitChatRoom() throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Exit Chat Room...");
+        System.out.print("Enter Chat Room Name: ");
+        String chatRoomName = scanner.nextLine();
+        bufferedWriter.write("SAIR_SALA " + chatRoomName);
+        bufferedWriter.newLine();
+        bufferedWriter.flush();
         
     }
     
-    public void closeChatRoom() {
-        
+    public void closeChatRoom() throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Close Chat Room...(You need to be admin to close it)");
+        System.out.print("Enter Chat Room Name: ");
+        String chatRoomName = scanner.nextLine();
+        bufferedWriter.write("FECHAR_SALA " + chatRoomName);
+        bufferedWriter.newLine();
+        bufferedWriter.flush();
     }
     
     public void banUser() {
