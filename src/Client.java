@@ -133,7 +133,7 @@ public class Client {
         try {
 
             Scanner scanner = new Scanner(System.in);
-            System.out.print("Enter Chat Room Name: ");
+            System.out.print("Enter Chat Room Name: "); // nao pode chegar com espaço e nem vazio
             String chatRoomName = scanner.nextLine();
             System.out.println("Enter Chat Room Type");
             System.out.println("[ 1 ] Public");
@@ -165,7 +165,7 @@ public class Client {
     public void enterChatRoom() throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter Chat Room...");
-        System.out.print("Enter Chat Room Name: ");
+        System.out.print("Enter Chat Room Name: "); //cheacar se nao ta vazio
         String chatRoomName = scanner.nextLine();
         System.out.print("Enter Chat Room Password(optional), if public press enter: ");
         String password = scanner.nextLine();
@@ -182,7 +182,7 @@ public class Client {
 
     public void sendMessage() throws IOException {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Choose Chat Room:");
+        System.out.println("Choose Chat Room:"); // checar se nao ta vazio o mesmo pra mensagem
         String chatRoomName = scanner.nextLine();
         System.out.print("Enter Message:");
         String message = scanner.nextLine();
@@ -194,7 +194,7 @@ public class Client {
     public void exitChatRoom() throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Exit Chat Room...");
-        System.out.print("Enter Chat Room Name: ");
+        System.out.print("Enter Chat Room Name: ");  //checar se nao ta vazio
         String chatRoomName = scanner.nextLine();
         bufferedWriter.write("SAIR_SALA " + chatRoomName);
         bufferedWriter.newLine();
@@ -205,7 +205,7 @@ public class Client {
     public void closeChatRoom() throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Close Chat Room...(You need to be admin to close it)");
-        System.out.print("Enter Chat Room Name: ");
+        System.out.print("Enter Chat Room Name: "); //checar se nao ta vazio
         String chatRoomName = scanner.nextLine();
         bufferedWriter.write("FECHAR_SALA " + chatRoomName);
         bufferedWriter.newLine();
@@ -218,7 +218,7 @@ public class Client {
         System.out.print("Enter Chat Room Name: ");
         String chatRoomName = scanner.nextLine();
         System.out.print("Enter username: ");
-        String username = scanner.nextLine();
+        String username = scanner.nextLine(); //checar se nao ta vazio tanto a sala e o username
         bufferedWriter.write("BANIR_USUARIO " + chatRoomName + " " + username);
         bufferedWriter.newLine();
         bufferedWriter.flush();
