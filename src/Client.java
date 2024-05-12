@@ -23,7 +23,7 @@ public class Client {
             this.bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             this.username = username;
             System.out.println("Username:" + username);
-            
+
         } catch (IOException e) {
             System.err.println("Error: Failed to start the server on port " + clientSocket.getPort());
             closeEverything(clientSocket, bufferedReader, bufferedWriter);
@@ -126,8 +126,8 @@ public class Client {
 
     public void createNew() {
         // if (!(username.equals())) {
-        //     System.out.println("User not Registered ");
-        //     return;
+        // System.out.println("User not Registered ");
+        // return;
         // }
 
         try {
@@ -192,9 +192,9 @@ public class Client {
         bufferedWriter.write("SAIR_SALA " + chatRoomName);
         bufferedWriter.newLine();
         bufferedWriter.flush();
-        
+
     }
-    
+
     public void closeChatRoom() throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Close Chat Room...(You need to be admin to close it)");
@@ -204,17 +204,25 @@ public class Client {
         bufferedWriter.newLine();
         bufferedWriter.flush();
     }
-    
-    public void banUser() {
-        
+
+    public void banUser() throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Ban User...(You need to be admin to close it)");
+        System.out.print("Enter Chat Room Name: ");
+        String chatRoomName = scanner.nextLine();
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
+        bufferedWriter.write("BANIR_USUARIO " + chatRoomName + " " + username);
+        bufferedWriter.newLine();
+        bufferedWriter.flush();
     }
-    
+
     public String getUsername() {
         return username;
     }
     // public void start() {
-        // System.out.println("Client started. Port : " + this.clientSocket.getPort());
-        // ObjectOutputStream output;
+    // System.out.println("Client started. Port : " + this.clientSocket.getPort());
+    // ObjectOutputStream output;
     // ObjectInputStream input;
     // Scanner scanner = new Scanner(System.in);
     // String messageTest = "";
