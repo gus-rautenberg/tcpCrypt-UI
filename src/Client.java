@@ -8,6 +8,8 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
+
 
 public class Client {
     private Socket clientSocket;
@@ -75,6 +77,7 @@ public class Client {
                         break;
                     case "8":
                         banUser();
+                        break;
                     case "9":
                         closeEverything(clientSocket, bufferedReader, bufferedWriter);
                         return;
@@ -142,6 +145,9 @@ public class Client {
         bufferedWriter.newLine();
         bufferedWriter.flush();
         this.username = username;
+        // bufferedWriter.write("AUTENTICACAO " + username);
+        // bufferedWriter.newLine();
+        // bufferedWriter.flush();
     }
 
     public void createNew() {
@@ -175,8 +181,29 @@ public class Client {
                     break;
 
                 case "2":
-                    System.out.print("Enter Private Chat Password: ");
-                    String password = scanner.nextLine();
+                    String password;
+                    do {
+                        System.out.print("Enter Chat Room Password: ");
+                        password = scanner.nextLine();
+            
+                        if (password.contains(" ") || password.isEmpty()) {
+                            System.out.println("Invalid Password. Password cannot contain spaces OR be empty.");
+                        }
+                    } while (password.contains(" ") || password.isEmpty());
+                    try {
+                        MessageDigest md = MessageDigest.getInstance("SHA-256");
+                        md.update(password.getBytes());
+                        byte[] digest = md.digest();
+                        StringBuilder hexString = new StringBuilder();
+                        for (byte hashByte : digest) {
+                            String hex = Integer.toHexString(0xff & hashByte);
+                            if (hex.length() == 1) hexString.append('0');
+                            hexString.append(hex);
+                        }
+                        password = hexString.toString();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     bufferedWriter.write("CRIAR_SALA " + "PRIVADA " + chatRoomName + " " + password);
                     bufferedWriter.newLine();
                     bufferedWriter.flush();
@@ -212,6 +239,20 @@ public class Client {
                 System.out.println("Invalid Password. Password cannot contain spaces.");
             }
         } while (password.contains(" "));
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(password.getBytes());
+            byte[] digest = md.digest();
+            StringBuilder hexString = new StringBuilder();
+            for (byte hashByte : digest) {
+                String hex = Integer.toHexString(0xff & hashByte);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            password = hexString.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         bufferedWriter.write("ENTRAR_SALA " + chatRoomName + " " + password);
         bufferedWriter.newLine();
         bufferedWriter.flush();
