@@ -41,6 +41,7 @@ public class Client {
             Scanner scanner = new Scanner(System.in);
             System.out.println("okoko");
             System.out.println("Welcome " + this.username);
+            String messageToSend;
             while (clientSocket.isConnected()) {
                 System.out.println("Select Operation: ");
                 System.out.println("[ 1 ] Register User");
@@ -52,7 +53,7 @@ public class Client {
                 System.out.println("[ 7 ] Close Chat Room");
                 System.out.println("[ 8 ] Ban User");
                 System.out.println("[ 9 ] Exit");
-                String messageToSend = scanner.nextLine();
+                messageToSend = scanner.nextLine();
                 switch (messageToSend) {
                     case "1":
                         registerUser();
@@ -87,10 +88,8 @@ public class Client {
                         break;
                 }
 
-                bufferedWriter.write(username + ": " + messageToSend);
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
             }
+            scanner.close();
 
         } catch (IOException e) {
             closeEverything(clientSocket, bufferedReader, bufferedWriter);
@@ -130,8 +129,18 @@ public class Client {
         }
     }
     public void registerUser() throws IOException {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Register User");
+        String username = handleUsername();
+
+        String messageToServer = "REGISTRO " + username;
+        sendMessageToServer(messageToServer);
+        this.username = username;
+        // bufferedWriter.write("AUTENTICACAO " + username);
+        // bufferedWriter.newLine();
+        // bufferedWriter.flush();
+    }
+    public String handleUsername() {
+        Scanner scanner = new Scanner(System.in);
         String username;
         do {
             System.out.print("Enter a valid username: ");
@@ -141,104 +150,49 @@ public class Client {
                 System.out.println("Invalid username. Username cannot be empty or contain spaces.");
             }
         } while (username.isEmpty() || username.contains(" "));
-        bufferedWriter.write("REGISTRO " + username);
-        bufferedWriter.newLine();
-        bufferedWriter.flush();
-        this.username = username;
-        // bufferedWriter.write("AUTENTICACAO " + username);
-        // bufferedWriter.newLine();
-        // bufferedWriter.flush();
+        return username;
     }
 
-    public void createNew() {
+    public void sendMessageToServer(String message) throws IOException {
+        this.bufferedWriter.write(message);
+        this.bufferedWriter.newLine();
+        this.bufferedWriter.flush();
+    }
+
+    public void createNew() throws IOException {
         // if (!(username.equals())) {
         // System.out.println("User not Registered ");
         // return;
         // }
-
-        try {
-
             Scanner scanner = new Scanner(System.in);
-            String chatRoomName;
+            String chatRoomName = handleChatRoomName();   
             System.out.println("Creating New Chat Room");
-            do {
-                System.out.print("Enter Chat Room Name: ");
-                chatRoomName = scanner.nextLine();
-    
-                if (chatRoomName.isEmpty() || chatRoomName.contains(" ")) {
-                    System.out.println("Invalid Chat Room Name. Chat Room Name cannot be empty or contain spaces.");
-                }
-            } while (chatRoomName.isEmpty() || chatRoomName.contains(" "));
+            
             System.out.println("Enter Chat Room Type");
             System.out.println("[ 1 ] Public");
             System.out.println("[ 2 ] Private");
             String roomType;
+            String messageToServer;
             switch (roomType = scanner.nextLine()) {
                 case "1":
-                    bufferedWriter.write("CRIAR_SALA " + "PUBLICA " + chatRoomName);
-                    bufferedWriter.newLine();
-                    bufferedWriter.flush();
+                    messageToServer = "CRIAR_SALA " + "PUBLICA " + chatRoomName;
+                    sendMessageToServer(messageToServer);
                     break;
 
                 case "2":
-                    String password;
-                    do {
-                        System.out.print("Enter Chat Room Password: ");
-                        password = scanner.nextLine();
-            
-                        if (password.contains(" ") || password.isEmpty()) {
-                            System.out.println("Invalid Password. Password cannot contain spaces OR be empty.");
-                        }
-                    } while (password.contains(" ") || password.isEmpty());
-                    try {
-                        MessageDigest md = MessageDigest.getInstance("SHA-256");
-                        md.update(password.getBytes());
-                        byte[] digest = md.digest();
-                        StringBuilder hexString = new StringBuilder();
-                        for (byte hashByte : digest) {
-                            String hex = Integer.toHexString(0xff & hashByte);
-                            if (hex.length() == 1) hexString.append('0');
-                            hexString.append(hex);
-                        }
-                        password = hexString.toString();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    bufferedWriter.write("CRIAR_SALA " + "PRIVADA " + chatRoomName + " " + password);
-                    bufferedWriter.newLine();
-                    bufferedWriter.flush();
+                    String password = handlePassword();
+                    password = handlePasswordSHA256(password);
+                    messageToServer = "CRIAR_SALA " + "PRIVADA " + chatRoomName + " " + password;
+                    sendMessageToServer(messageToServer);
+
                     break;
                 default:
                     System.out.println("Invalid option. Please try again.");
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
-    public void enterChatRoom() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        String chatRoomName;
-        System.out.println("Entering Room...");
-        do {
-            System.out.print("Enter Chat Room Name: ");
-            chatRoomName = scanner.nextLine();
-
-            if (chatRoomName.isEmpty() || chatRoomName.contains(" ")) {
-                System.out.println("Invalid Chat Room Name. Chat Room Name cannot be empty or contain spaces.");
-            }
-        } while (chatRoomName.isEmpty() || chatRoomName.contains(" "));
-  
-        String password;
-        do {
-            System.out.print("Enter Chat Room Password(optional), if public press enter: ");
-            password = scanner.nextLine();
-
-            if (password.contains(" ")) {
-                System.out.println("Invalid Password. Password cannot contain spaces.");
-            }
-        } while (password.contains(" "));
+    public String handlePasswordSHA256(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(password.getBytes());
@@ -253,20 +207,24 @@ public class Client {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        bufferedWriter.write("ENTRAR_SALA " + chatRoomName + " " + password);
-        bufferedWriter.newLine();
-        bufferedWriter.flush();
+        return password;
     }
 
-    public void listAllChatRooms() throws IOException {
-        bufferedWriter.write("LISTAR_SALAS ");
-        bufferedWriter.newLine();
-        bufferedWriter.flush();
-    }
-
-    public void sendMessage() throws IOException {
+    public String handlePassword() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Choose Chat Room:"); // checar se nao ta vazio o mesmo pra mensagem
+        String password;
+        do {
+            System.out.print("Enter Chat Room Password: ");
+            password = scanner.nextLine();
+
+            if (password.contains(" ") || password.isEmpty()) {
+                System.out.println("Invalid Password. Password cannot contain spaces OR be empty.");
+            }
+        } while (password.contains(" ") || password.isEmpty());
+        return password;
+    }
+    public String handleChatRoomName() {
+        Scanner scanner = new Scanner(System.in);
         String chatRoomName;
         do {
             System.out.print("Enter Chat Room Name: ");
@@ -276,82 +234,86 @@ public class Client {
                 System.out.println("Invalid Chat Room Name. Chat Room Name cannot be empty or contain spaces.");
             }
         } while (chatRoomName.isEmpty() || chatRoomName.contains(" "));
-  
+        return chatRoomName;
+    }
+
+    public void enterChatRoom() throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Entering Room...");
+        String chatRoomName = handleChatRoomName();
+
+        String password = handlePasswordEnterRoom();
+
+        password = handlePasswordSHA256(password);
+
+        String messageToServer = "ENTRAR_SALA " + chatRoomName + " " + password;
+        sendMessageToServer(messageToServer);
+    }
+
+    public String handlePasswordEnterRoom() {
+        Scanner scanner = new Scanner(System.in);
+        String password;
+        do {
+            System.out.print("Enter Chat Room Password(optional), if public press enter: ");
+            password = scanner.nextLine();
+
+            if (password.contains(" ")) {
+                System.out.println("Invalid Password. Password cannot contain spaces.");
+            }
+        } while (password.contains(" "));
+        return password;
+    }
+
+    public void listAllChatRooms() throws IOException {
+        String messageToServer = "LISTAR_SALAS ";
+        sendMessageToServer(messageToServer);
+    }
+
+    public void sendMessage() throws IOException {
+        System.out.println("Choose Chat Room:"); // checar se nao ta vazio o mesmo pra mensagem
+        String chatRoomName = handleChatRoomName();
+
+        String message = handleMessage();
+
+        String messageToServer = "ENVIAR_MENSAGEM " + chatRoomName + " " + message;
+        sendMessageToServer(messageToServer);
+    }
+
+    public String handleMessage() {
+        Scanner scanner = new Scanner(System.in);
         String message;
         do {
             System.out.print("Enter Message: ");
             message = scanner.nextLine();
-
             if (message.isEmpty()) {
                 System.out.println("Invalid Message. Message cannot be empty.");
             }
         } while (message.isEmpty());
-  
-        bufferedWriter.write("ENVIAR_MENSAGEM " + chatRoomName + " " + message);
-        bufferedWriter.newLine();
-        bufferedWriter.flush();
+        return message;
     }
 
     public void exitChatRoom() throws IOException {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Exit Chat Room...");
-        String chatRoomName;
-        do {
-            System.out.print("Enter Chat Room Name: ");
-            chatRoomName = scanner.nextLine();
-
-            if (chatRoomName.isEmpty() || chatRoomName.contains(" ")) {
-                System.out.println("Invalid Chat Room Name. Chat Room Name cannot be empty or contain spaces.");
-            }
-        } while (chatRoomName.isEmpty() || chatRoomName.contains(" "));
-  
-        bufferedWriter.write("SAIR_SALA " + chatRoomName);
-        bufferedWriter.newLine();
-        bufferedWriter.flush();
-
+        String chatRoomName = handleChatRoomName();
+        
+        String messageToServer = "SAIR_SALA " + chatRoomName;
+        sendMessageToServer(messageToServer);
     }
 
     public void closeChatRoom() throws IOException {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Close Chat Room...(You need to be admin to close it)");
-        String chatRoomName;
-        do {
-            System.out.print("Enter Chat Room Name: ");
-            chatRoomName = scanner.nextLine();
-
-            if (chatRoomName.isEmpty() || chatRoomName.contains(" ")) {
-                System.out.println("Invalid Chat Room Name. Chat Room Name cannot be empty or contain spaces.");
-            }
-        } while (chatRoomName.isEmpty() || chatRoomName.contains(" "));
-        bufferedWriter.write("FECHAR_SALA " + chatRoomName);
-        bufferedWriter.newLine();
-        bufferedWriter.flush();
+        String chatRoomName = handleChatRoomName();
+        String messageToServer = "FECHAR_SALA " + chatRoomName;
+        sendMessageToServer(messageToServer);
     }
 
     public void banUser() throws IOException {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Ban User...(You need to be admin to close it)");
-        String chatRoomName;
-        do {
-            System.out.print("Enter Chat Room Name: ");
-            chatRoomName = scanner.nextLine();
+        String chatRoomName = handleChatRoomName();
+        String username = handleUsername();
 
-            if (chatRoomName.isEmpty() || chatRoomName.contains(" ")) {
-                System.out.println("Invalid Chat Room Name. Chat Room Name cannot be empty or contain spaces.");
-            }
-        } while (chatRoomName.isEmpty() || chatRoomName.contains(" "));
-        String username;
-        do {
-            System.out.print("Enter a valid username: ");
-            username = scanner.nextLine();
-
-            if (username.isEmpty() || username.contains(" ")) {
-                System.out.println("Invalid username. Username cannot be empty or contain spaces.");
-            }
-        } while (username.isEmpty() || username.contains(" "));//checar se nao ta vazio tanto a sala e o username
-        bufferedWriter.write("BANIR_USUARIO " + chatRoomName + " " + username);
-        bufferedWriter.newLine();
-        bufferedWriter.flush();
+        String messageToServer = "BANIR_USUARIO " + chatRoomName + " " + username;
+        sendMessageToServer(messageToServer);
     }
 
     public String getUsername() {
