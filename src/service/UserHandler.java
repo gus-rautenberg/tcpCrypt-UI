@@ -20,9 +20,7 @@ public class UserHandler {
         String messageToServer = "REGISTRO " + username;
         utils.sendMessageToServer(messageToServer);
         this.username = username;
-        // bufferedWriter.write("AUTENTICACAO " + username);
-        // bufferedWriter.newLine();
-        // bufferedWriter.flush();
+
     }
 
     public String getUsername() {

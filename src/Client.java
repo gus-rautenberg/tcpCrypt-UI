@@ -25,8 +25,6 @@ public class Client {
             this.clientSocket = clientSocket;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            // this.username = username;
-            // System.out.println("Username:" + username);
 
         } catch (IOException e) {
             System.err.println("Error: Failed to start the server on port " + clientSocket.getPort());
@@ -37,12 +35,11 @@ public class Client {
 
     public void clientFunction() {
         try {
-            // bufferedWriter.write(username);
             bufferedWriter.newLine();
             bufferedWriter.flush();
+
             Scanner scanner = new Scanner(System.in);
-            System.out.println("okoko");
-            System.out.println("Welcome " + this.username);
+
             String messageToSend;
 
             UserHandler clientHandler = new UserHandler(this.bufferedWriter);
@@ -143,10 +140,6 @@ public class Client {
             e.printStackTrace();
         }
     }
-
-    public String getUsername() {
-        return username;
-    }
     
     public static void main(String[] args) throws IOException {
         Socket clientSocket = new Socket("localhost", 8080);
@@ -155,69 +148,3 @@ public class Client {
         client.clientFunction();
     }
 }
-
-// public static void main(String[] args) throws IOException {
-//     Scanner scanner = new Scanner(System.in);
-
-//     Socket clientSocket = new Socket("localhost", 8080);
-//     Client client;
-//     while(true){
-//         String username;
-//         do {
-//             System.out.print("Enter a valid username: ");
-//             username = scanner.nextLine();
-
-//             if (username.isEmpty() || username.contains(" ")) {
-//                 System.out.println("Invalid username. Username cannot be empty or contain spaces.");
-//             }
-//         } while (username.isEmpty() || username.contains(" "));
-//         client = new Client(clientSocket, username);
-//         client.listenForMessage();
-//         String messageFromServer = client.bufferedReader.readLine();
-//         String[] message = messageFromServer.split(" ");
-//         if(message[0].equals("ERRO")){
-//             System.out.println(message[1]);
-//         }
-//         if(message[0].equals("REGISTRO_OK")){
-//             System.out.println("Registered successfully");
-//             break;
-//         }
-//     }
-//     client.listenForMessage();
-//     client.clientFunction();
-// }
-
-
-// public void start() {
-// System.out.println("Client started. Port : " + this.clientSocket.getPort());
-// ObjectOutputStream output;
-// ObjectInputStream input;
-// Scanner scanner = new Scanner(System.in);
-// String messageTest = "";
-
-// try {
-// System.out.println("Conectado ao servidor");
-// System.out.println("Digite: SAIR para encerrar conexão");
-
-// output = new ObjectOutputStream(this.clientSocket.getOutputStream());
-// output.flush();
-// input = new ObjectInputStream(this.clientSocket.getInputStream());
-
-// System.out.println("kk");
-// System.out.println("Server>> messageTest" + messageTest);
-
-// do {
-// System.out.print("..:");
-// messageTest = scanner.nextLine();
-// output.writeObject(messageTest);
-// output.flush();
-
-// } while (!messageTest.equals("SAIR"));
-// output.close();
-// input.close();
-// this.clientSocket.close();
-
-// } catch (Exception e) {
-// System.err.println("Error 1: " + e);
-// }
-// }

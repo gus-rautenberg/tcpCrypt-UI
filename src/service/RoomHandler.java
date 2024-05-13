@@ -13,10 +13,6 @@ public class RoomHandler {
         }
         
         public void createNew() throws IOException {
-        // if (!(username.equals())) {
-        // System.out.println("User not Registered ");
-        // return;
-        // }
             Scanner scanner = new Scanner(System.in);
             String chatRoomName = utils.handleChatRoomName();   
             System.out.println("Creating New Chat Room");
