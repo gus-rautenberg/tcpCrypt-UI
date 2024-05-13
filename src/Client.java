@@ -16,13 +16,13 @@ public class Client {
     private String username;
     private boolean running;
 
-    public Client(Socket clientSocket, String username) {
+    public Client(Socket clientSocket) {
         try {
             this.clientSocket = clientSocket;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            this.username = username;
-            System.out.println("Username:" + username);
+            // this.username = username;
+            // System.out.println("Username:" + username);
 
         } catch (IOException e) {
             System.err.println("Error: Failed to start the server on port " + clientSocket.getPort());
@@ -33,7 +33,7 @@ public class Client {
 
     public void clientFunction() {
         try {
-            bufferedWriter.write(username);
+            // bufferedWriter.write(username);
             bufferedWriter.newLine();
             bufferedWriter.flush();
             Scanner scanner = new Scanner(System.in);
@@ -41,38 +41,41 @@ public class Client {
             System.out.println("Welcome " + this.username);
             while (clientSocket.isConnected()) {
                 System.out.println("Select Operation: ");
-                System.out.println("[ 1 ] Create New Chat Room");
-                System.out.println("[ 2 ] Enter New Chat Room");
-                System.out.println("[ 3 ] List All Chat Rooms");
-                System.out.println("[ 4 ] Send Messages");
-                System.out.println("[ 5 ] Exit Chat Room");
-                System.out.println("[ 6 ] Close Chat Room");
-                System.out.println("[ 7 ] Ban User");
-                System.out.println("[ 8 ] Exit");
+                System.out.println("[ 1 ] Register User");
+                System.out.println("[ 2 ] Create New Chat Room");
+                System.out.println("[ 3 ] Enter New Chat Room");
+                System.out.println("[ 4 ] List All Chat Rooms");
+                System.out.println("[ 5 ] Send Messages");
+                System.out.println("[ 6 ] Exit Chat Room");
+                System.out.println("[ 7 ] Close Chat Room");
+                System.out.println("[ 8 ] Ban User");
+                System.out.println("[ 9 ] Exit");
                 String messageToSend = scanner.nextLine();
                 switch (messageToSend) {
                     case "1":
-                        createNew();
+                        registerUser();
                         break;
                     case "2":
-                        enterChatRoom();
+                        createNew();
                         break;
                     case "3":
-                        listAllChatRooms();
+                        enterChatRoom();
                         break;
                     case "4":
-                        sendMessage();
+                        listAllChatRooms();
                         break;
                     case "5":
-                        exitChatRoom();
+                        sendMessage();
                         break;
                     case "6":
-                        closeChatRoom();
+                        exitChatRoom();
                         break;
                     case "7":
-                        banUser();
+                        closeChatRoom();
                         break;
                     case "8":
+                        banUser();
+                    case "9":
                         closeEverything(clientSocket, bufferedReader, bufferedWriter);
                         return;
 
@@ -122,6 +125,23 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public void registerUser() throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Register User");
+        String username;
+        do {
+            System.out.print("Enter a valid username: ");
+            username = scanner.nextLine();
+
+            if (username.isEmpty() || username.contains(" ")) {
+                System.out.println("Invalid username. Username cannot be empty or contain spaces.");
+            }
+        } while (username.isEmpty() || username.contains(" "));
+        bufferedWriter.write("REGISTRO " + username);
+        bufferedWriter.newLine();
+        bufferedWriter.flush();
+        this.username = username;
     }
 
     public void createNew() {
@@ -298,23 +318,58 @@ public class Client {
     }
     
     public static void main(String[] args) throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        String username;
-        do {
-            System.out.print("Enter a valid username: ");
-            username = scanner.nextLine();
+        // Scanner scanner = new Scanner(System.in);
+        // String username;
+        // do {
+        //     System.out.print("Enter a valid username: ");
+        //     username = scanner.nextLine();
 
-            if (username.isEmpty() || username.contains(" ")) {
-                System.out.println("Invalid username. Username cannot be empty or contain spaces.");
-            }
-        } while (username.isEmpty() || username.contains(" "));
+        //     if (username.isEmpty() || username.contains(" ")) {
+        //         System.out.println("Invalid username. Username cannot be empty or contain spaces.");
+        //     }
+        // } while (username.isEmpty() || username.contains(" "));
         Socket clientSocket = new Socket("localhost", 8080);
-        Client client = new Client(clientSocket, username);
+        Client client = new Client(clientSocket);
         client.listenForMessage();
         client.clientFunction();
     }
 
+
+
 }
+
+// public static void main(String[] args) throws IOException {
+//     Scanner scanner = new Scanner(System.in);
+
+//     Socket clientSocket = new Socket("localhost", 8080);
+//     Client client;
+//     while(true){
+//         String username;
+//         do {
+//             System.out.print("Enter a valid username: ");
+//             username = scanner.nextLine();
+
+//             if (username.isEmpty() || username.contains(" ")) {
+//                 System.out.println("Invalid username. Username cannot be empty or contain spaces.");
+//             }
+//         } while (username.isEmpty() || username.contains(" "));
+//         client = new Client(clientSocket, username);
+//         client.listenForMessage();
+//         String messageFromServer = client.bufferedReader.readLine();
+//         String[] message = messageFromServer.split(" ");
+//         if(message[0].equals("ERRO")){
+//             System.out.println(message[1]);
+//         }
+//         if(message[0].equals("REGISTRO_OK")){
+//             System.out.println("Registered successfully");
+//             break;
+//         }
+//     }
+//     client.listenForMessage();
+//     client.clientFunction();
+// }
+
+
 // public void start() {
 // System.out.println("Client started. Port : " + this.clientSocket.getPort());
 // ObjectOutputStream output;
