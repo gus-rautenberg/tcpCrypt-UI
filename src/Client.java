@@ -99,7 +99,8 @@ public class Client {
                         System.out.println("Invalid option. Please try again.");
                         break;
                 }
-
+                System.out.println("Press Enter to continue...");
+                scanner.nextLine();
             }
             scanner.close();
 
