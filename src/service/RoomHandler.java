@@ -12,7 +12,7 @@ public class RoomHandler {
             this.utils = new Utils(bufferedWriter);
         }
         
-        public void createNew() throws IOException {
+        public void createNew(AuthenticationHandler authHandler) throws IOException {
             Scanner scanner = new Scanner(System.in);
             String chatRoomName = utils.handleChatRoomName();   
             System.out.println("Creating New Chat Room");
@@ -25,14 +25,14 @@ public class RoomHandler {
             switch (roomType = scanner.nextLine()) {
                 case "1":
                     messageToServer = "CRIAR_SALA " + "PUBLICA " + chatRoomName;
-                    utils.sendMessageToServer(messageToServer);
+                    authHandler.encryptedMessage(messageToServer);
                     break;
 
                 case "2":
                     String password = utils.handlePassword();
                     password = utils.handlePasswordSHA256(password);
                     messageToServer = "CRIAR_SALA " + "PRIVADA " + chatRoomName + " " + password;
-                    utils.sendMessageToServer(messageToServer);
+                    authHandler.encryptedMessage(messageToServer);
 
                     break;
                 default:
@@ -41,7 +41,7 @@ public class RoomHandler {
 
     }
 
-    public void enterChatRoom() throws IOException {
+    public void enterChatRoom(AuthenticationHandler authHandler) throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Entering Room...");
         String chatRoomName = utils.handleChatRoomName();
@@ -51,45 +51,45 @@ public class RoomHandler {
         password = utils.handlePasswordSHA256(password);
 
         String messageToServer = "ENTRAR_SALA " + chatRoomName + " " + password;
-        utils.sendMessageToServer(messageToServer);
+        authHandler.encryptedMessage(messageToServer);
     }
 
-    public void listAllChatRooms() throws IOException {
+    public void listAllChatRooms(AuthenticationHandler authHandler) throws IOException {
         String messageToServer = "LISTAR_SALAS ";
-        utils.sendMessageToServer(messageToServer);
+        authHandler.encryptedMessage(messageToServer);
     }
 
-    public void exitChatRoom() throws IOException {
+    public void exitChatRoom(AuthenticationHandler authHandler) throws IOException {
         System.out.println("Exit Chat Room...");
         String chatRoomName = utils.handleChatRoomName();
         
         String messageToServer = "SAIR_SALA " + chatRoomName;
-        utils.sendMessageToServer(messageToServer);
+        authHandler.encryptedMessage(messageToServer);
     }
 
-    public void closeChatRoom() throws IOException {
+    public void closeChatRoom(AuthenticationHandler authHandler) throws IOException {
         System.out.println("Close Chat Room...(You need to be admin to close it)");
         String chatRoomName = utils.handleChatRoomName();
         String messageToServer = "FECHAR_SALA " + chatRoomName;
-        utils.sendMessageToServer(messageToServer);
+        authHandler.encryptedMessage(messageToServer);
     }
 
-    public void banUser() throws IOException {
+    public void banUser(AuthenticationHandler authHandler) throws IOException {
         System.out.println("Ban User...(You need to be admin to close it)");
         String chatRoomName = utils.handleChatRoomName();
         String username = utils.handleUsername();
 
         String messageToServer = "BANIR_USUARIO " + chatRoomName + " " + username;
-        utils.sendMessageToServer(messageToServer);
+        authHandler.encryptedMessage(messageToServer);
     }
 
-    public void sendMessage() throws IOException {
+    public void sendMessage(AuthenticationHandler authHandler) throws IOException {
         System.out.println("Choose Chat Room:"); // checar se nao ta vazio o mesmo pra mensagem
         String chatRoomName = utils.handleChatRoomName();
 
         String message = utils.handleMessage();
 
         String messageToServer = "ENVIAR_MENSAGEM " + chatRoomName + " " + message;
-        utils.sendMessageToServer(messageToServer);
+        authHandler.encryptedMessage(messageToServer);
     }
 }
