@@ -84,11 +84,14 @@ public class AuthenticationHandler {
     }
     public String decryptMessageFromClient(String message) throws Exception {
         try {
+            System.out.println("messageBanimento: " + message);
             byte[] messageBytes = Base64.getDecoder().decode(message);
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.DECRYPT_MODE, this.key); // aesKey é a chave AES criada pelo servidor
             byte[] decryptedMessageBytes = cipher.doFinal(messageBytes);
             String decryptedMessage = new String(decryptedMessageBytes);
+            System.out.println("Decrypted message: " + decryptedMessage);
+
             return decryptedMessage;
         } catch (Exception e) {
             e.printStackTrace();

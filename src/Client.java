@@ -129,6 +129,7 @@ public class Client {
                         messageFromServer = bufferedReader.readLine();
                         String[] words = messageFromServer.split(" ");
                         for(int i = 0; i < words.length; i++) {
+                            
                             System.out.println("words[" + i + "]: " + words[i]);
                         }
                         if(crypto == false) {
@@ -151,6 +152,7 @@ public class Client {
                         } else {
                             try {
                                 messageFromServer = authHandler.decryptMessageFromClient(messageFromServer);
+                                System.out.println("pulou ban");
                                 
                             } catch (Exception e) {
                                 e.printStackTrace();
