@@ -196,9 +196,11 @@ public class Client {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                        } if(!words[0].equals("CHAVE_PUBLICA")) {
+                            System.out.println(messageFromServer);
+
                         }
                         
-                        System.out.println(messageFromServer);
                     } catch (IOException e) {
                         closeEverything(clientSocket, bufferedReader, bufferedWriter);
                     }
