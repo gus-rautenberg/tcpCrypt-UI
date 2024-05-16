@@ -10,6 +10,7 @@ import utils.Utils;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.security.KeyFactory;
 public class AuthenticationHandler {
     private String chaveSimetricaEncriptada;
     private static SecretKey key;
+    private ArrayList<SecretKey> keys;
     private static byte[] msgEncriptada;
     private Utils utils;
 
@@ -88,7 +90,19 @@ public class AuthenticationHandler {
             byte[] messageBytes = Base64.getDecoder().decode(message);
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.DECRYPT_MODE, this.key); // aesKey é a chave AES criada pelo servidor
+            System.out.print("this.key: " + this.key);
+            keys = new ArrayList<>();
+            keys.add(this.key);
+            for (int i = 0; i < keys.size(); i++) {
+                SecretKey chave = keys.get(i);
+                if(chave.equals(this.key)){
+                    System.out.println("Mesma chave");
+                } else {
+                    System.out.println("Trocou a chave");
+                }
+            }
             byte[] decryptedMessageBytes = cipher.doFinal(messageBytes);
+            System.out.println("Decrypted messageBytes: " + decryptedMessageBytes);
             String decryptedMessage = new String(decryptedMessageBytes);
             System.out.println("Decrypted message: " + decryptedMessage);
 
