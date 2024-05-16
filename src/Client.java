@@ -50,6 +50,7 @@ public class Client {
 
             UserHandler clientHandler = new UserHandler(this.bufferedWriter, this.bufferedReader);
             RoomHandler roomHandler = new RoomHandler(this.bufferedWriter);
+            System.out.println();
 
             while (clientSocket.isConnected()) {
                 System.out.println("Select Operation: ");
@@ -61,7 +62,8 @@ public class Client {
                 System.out.println("[ 6 ] Exit Chat Room");
                 System.out.println("[ 7 ] Close Chat Room");
                 System.out.println("[ 8 ] Ban User");
-                System.out.println("[ 9 ] Exit");
+                System.out.println();
+                System.out.print("Select Option: ");
                 messageToSend = scanner.nextLine();
                 switch (messageToSend) {
                     case "1":
@@ -131,21 +133,14 @@ public class Client {
 
                         roomHandler.banUser(authHandler);
                         break;
-                        
-                    case "9":
-                        if(!crypto) {
-                            System.out.println("ERRO: User not registered");
-                            break;
-                        }
-
-                        closeEverything(clientSocket, bufferedReader, bufferedWriter);
-                        return;
 
                     default:
                         System.out.println("Invalid option. Please try again.");
                         break;
                 }
-                System.out.println("Press Enter to continue...");
+                System.out.println();
+                System.out.println("Press (Enter) to continue...");
+                
                 scanner.nextLine();
             }
             scanner.close();
