@@ -92,4 +92,11 @@ public class RoomHandler {
         String messageToServer = "ENVIAR_MENSAGEM " + chatRoomName + " " + message;
         authHandler.encryptedMessage(messageToServer);
     }
+
+    
+    public void interrupt(AuthenticationHandler authHandler, String username) throws IOException {
+        String messageToServer = "INTERRUPTION " + username;
+        authHandler.encryptedMessage(messageToServer);
+    }
+
 }

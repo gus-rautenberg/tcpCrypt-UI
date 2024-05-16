@@ -65,40 +65,79 @@ public class Client {
                 messageToSend = scanner.nextLine();
                 switch (messageToSend) {
                     case "1":
+                        if(crypto) {
+                            System.out.println("ERRO: User already registered");
+                            break;
+                        }
                         clientHandler.registerUser(authHandler);
                         this.username = clientHandler.getUsername();
                         
                         break;
 
                     case "2":
+                        if(!crypto) {
+                            System.out.println("ERRO: User not registered");
+                            break;
+                        }
                         roomHandler.createNew(authHandler);
                         break;
 
                     case "3":
+                        if(!crypto) {
+                            System.out.println("ERRO: User not registered");
+                            break;
+                        }
                         roomHandler.enterChatRoom(authHandler);
                         break;
 
                     case "4":
+                        if(!crypto) {
+                            System.out.println("ERRO: User not registered");
+                            break;
+                        }
                         roomHandler.listAllChatRooms(authHandler);
                         break;
 
                     case "5":
+                        if(!crypto) {
+                            System.out.println("ERRO: User not registered");
+                            break;
+                        }
                         roomHandler.sendMessage(authHandler);
                         break;
 
                     case "6":
+                        if(!crypto) {
+                            System.out.println("ERRO: User not registered");
+                            break;
+                        }
                         roomHandler.exitChatRoom(authHandler);
                         break;
 
                     case "7":
+                        if(!crypto) {
+                            System.out.println("ERRO: User not registered");
+                            break;
+                        }
+
                         roomHandler.closeChatRoom(authHandler);
                         break;
 
                     case "8":
+                        if(!crypto) {
+                            System.out.println("ERRO: User not registered");
+                            break;
+                        }
+
                         roomHandler.banUser(authHandler);
                         break;
                         
                     case "9":
+                        if(!crypto) {
+                            System.out.println("ERRO: User not registered");
+                            break;
+                        }
+
                         closeEverything(clientSocket, bufferedReader, bufferedWriter);
                         return;
 
@@ -116,11 +155,11 @@ public class Client {
         }
     }
 
+
     public void listenForMessage() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String messageFromGroupChat;
                 Utils utils = new Utils(bufferedWriter);
                 while (clientSocket.isConnected()) {
                     try {
@@ -130,20 +169,20 @@ public class Client {
                         String[] words = messageFromServer.split(" ");
                         for(int i = 0; i < words.length; i++) {
                             
-                            System.out.println("words[" + i + "]: " + words[i]);
+                            // System.out.println("words[" + i + "]: " + words[i]);
                         }
                         if(crypto == false) {
-                            System.out.println("nao esntra aqui no crypto");
+                            // System.out.println("nao esntra aqui no crypto");
                             if(words[0].equals("REGISTRO_OK")){
-                                System.out.println("ta na noia esse cara");
+                                // System.out.println("ta na noia esse cara");
                                 String messageToServer = "AUTENTICACAO " + username;
-                                System.out.println("username: " + username);
-                                System.out.println("messageToServer: " + messageToServer);
+                                // System.out.println("username: " + username);
+                                // System.out.println("messageToServer: " + messageToServer);
 
                                 utils.sendMessageToServer(messageToServer);
                                 // System.out.println("REGISTRO_OK");
                             } else if(words[0].equals("CHAVE_PUBLICA")){
-                                System.out.println("Entrou aqui: ");
+                                // System.out.println("Entrou aqui: ");
                                 //pq nao entra aqui??
                                 authHandler.setSimetricKey(words[1]);
                                 authHandler.sendSimetricKeyToServer();
@@ -152,7 +191,7 @@ public class Client {
                         } else {
                             try {
                                 messageFromServer = authHandler.decryptMessageFromClient(messageFromServer);
-                                System.out.println("pulou ban");
+                                // System.out.println("pulou ban");
                                 
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -170,6 +209,8 @@ public class Client {
 
     public void closeEverything(Socket clientSocket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
         try {
+            RoomHandler roomHandler = new RoomHandler(bufferedWriter);
+            roomHandler.interrupt(this.authHandler, this.username);
             if (bufferedReader != null) {
                 bufferedReader.close();
             }
@@ -190,4 +231,6 @@ public class Client {
         client.listenForMessage();
         client.clientFunction();
     }
+
+
 }
