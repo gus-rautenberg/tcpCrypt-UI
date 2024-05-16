@@ -90,7 +90,7 @@ public class AuthenticationHandler {
             byte[] messageBytes = Base64.getDecoder().decode(message);
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.DECRYPT_MODE, this.key); // aesKey é a chave AES criada pelo servidor
-            System.out.print("this.key: " + this.key);
+            // System.out.print("this.key: " + this.key);
             keys = new ArrayList<>();
             keys.add(this.key);
             for (int i = 0; i < keys.size(); i++) {
