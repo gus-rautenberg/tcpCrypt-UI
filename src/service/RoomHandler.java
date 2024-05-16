@@ -20,6 +20,7 @@ public class RoomHandler {
             System.out.println("Enter Chat Room Type");
             System.out.println("[ 1 ] Public");
             System.out.println("[ 2 ] Private");
+            System.out.print("Select Option: ");
             String roomType;
             String messageToServer;
             switch (roomType = scanner.nextLine()) {
