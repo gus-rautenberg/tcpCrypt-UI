@@ -24,10 +24,9 @@ public class AuthenticationHandler {
     private static byte[] msgEncriptada;
     private Utils utils;
 
-
     public AuthenticationHandler(BufferedWriter bufferedWriter) {
         try {
-            
+
             KeyGenerator generator = KeyGenerator.getInstance("AES");
             this.key = generator.generateKey();
             this.utils = new Utils(bufferedWriter);
@@ -45,12 +44,15 @@ public class AuthenticationHandler {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
 
-            Cipher cipher =  Cipher.getInstance("RSA");
+            Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             byte[] encryptedAesKey = cipher.doFinal(this.key.getEncoded());
-            
+            for (byte bit : encryptedAesKey) {
+                System.out.print(bit + " ");
+            }
             this.chaveSimetricaEncriptada = Base64.getEncoder().encodeToString(encryptedAesKey);
-            // System.out.println("Chave Simétrica Encriptada: " + this.chaveSimetricaEncriptada);
+            // System.out.println("Chave Simétrica Encriptada: " +
+            // this.chaveSimetricaEncriptada);
             byte[] chave = this.key.getEncoded();
             // System.out.println("thiskey: " +chave);
         } catch (Exception e) {
@@ -59,12 +61,14 @@ public class AuthenticationHandler {
 
     }
 
-    public void sendSimetricKeyToServer(){
+    public void sendSimetricKeyToServer() {
         try {
-            // String encryptedKeyMessageBase64 = Base64.getEncoder().encodeToString(this.chaveSimetricaEncriptada.getBytes());
+            // String encryptedKeyMessageBase64 =
+            // Base64.getEncoder().encodeToString(this.chaveSimetricaEncriptada.getBytes());
 
             String encryptedKeyMessage = "CHAVE_SIMETRICA " + this.chaveSimetricaEncriptada;
-            // System.out.println("encryptedKeyMessage: " + encryptedKeyMessage);
+
+            System.out.println("Chave Simetrica: " + encryptedKeyMessage);
             utils.sendMessageToServer(encryptedKeyMessage);
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,18 +76,19 @@ public class AuthenticationHandler {
 
     }
 
-    public void encryptedMessage(String Message){
+    public void encryptedMessage(String Message) {
         try {
             Cipher cif = Cipher.getInstance("AES");
             cif.init(Cipher.ENCRYPT_MODE, this.key);
-    
+
             byte[] buffer = cif.doFinal(Message.getBytes());
             String messageToSend = Base64.getEncoder().encodeToString(buffer);
             utils.sendMessageToServer(messageToSend);
         } catch (Exception e) {
             e.printStackTrace();
-        }  
+        }
     }
+
     public String decryptMessageFromClient(String message) throws Exception {
         try {
             // System.out.println("messageBanimento: " + message);
@@ -96,9 +101,9 @@ public class AuthenticationHandler {
             for (int i = 0; i < keys.size(); i++) {
                 SecretKey chave = keys.get(i);
                 // if(chave.equals(this.key)){
-                //     // System.out.println("Mesma chave");
+                // // System.out.println("Mesma chave");
                 // } else {
-                //     // System.out.println("Trocou a chave");
+                // // System.out.println("Trocou a chave");
                 // }
             }
             byte[] decryptedMessageBytes = cipher.doFinal(messageBytes);
@@ -112,5 +117,5 @@ public class AuthenticationHandler {
             return "Error: Failed to decrypt message";
 
         }
-    } 
-} 
+    }
+}
