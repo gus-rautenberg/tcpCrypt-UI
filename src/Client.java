@@ -165,18 +165,13 @@ public class Client {
                         // System.out.println("words[" + i + "]: " + words[i]);
                         // }
                         if (crypto == false) {
-                            // System.out.println("nao esntra aqui no crypto");
                             if (words[0].equals("REGISTRO_OK")) {
-                                // System.out.println("ta na noia esse cara");
                                 String messageToServer = "AUTENTICACAO " + username;
-                                // System.out.println("username: " + username);
-                                // System.out.println("messageToServer: " + messageToServer);
+
 
                                 utils.sendMessageToServer(messageToServer);
-                                // System.out.println("REGISTRO_OK");
                             } else if (words[0].equals("CHAVE_PUBLICA")) {
-                                // System.out.println("Entrou aqui: ");
-                                // pq nao entra aqui??
+
                                 authHandler.setSimetricKey(words[1]);
                                 authHandler.sendSimetricKeyToServer();
                                 crypto = true;
@@ -190,7 +185,8 @@ public class Client {
                                 e.printStackTrace();
                             }
                         }
-                        if (!words[0].equals("CHAVE_PUBLICA")) {
+                        if (!(words[0].equals("CHAVE_PUBLICA")) && !words[0].equals("CHAVE_SIMETRICA")) {
+
                             System.out.println(messageFromServer);
 
                         }

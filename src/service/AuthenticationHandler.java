@@ -47,9 +47,9 @@ public class AuthenticationHandler {
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             byte[] encryptedAesKey = cipher.doFinal(this.key.getEncoded());
-            for (byte bit : encryptedAesKey) {
-                System.out.print(bit + " ");
-            }
+            // for (byte bit : encryptedAesKey) {
+            //     System.out.print(bit + " ");
+            // }
             this.chaveSimetricaEncriptada = Base64.getEncoder().encodeToString(encryptedAesKey);
             // System.out.println("Chave Simétrica Encriptada: " +
             // this.chaveSimetricaEncriptada);
@@ -68,7 +68,7 @@ public class AuthenticationHandler {
 
             String encryptedKeyMessage = "CHAVE_SIMETRICA " + this.chaveSimetricaEncriptada;
 
-            System.out.println("Chave Simetrica: " + encryptedKeyMessage);
+            // System.out.println("Chave Simetrica: " + encryptedKeyMessage);
             utils.sendMessageToServer(encryptedKeyMessage);
         } catch (Exception e) {
             e.printStackTrace();
