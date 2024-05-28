@@ -6,39 +6,39 @@ import java.util.Scanner;
 import utils.Utils;
 
 public class RoomHandler {
-        private Utils utils;
+    private Utils utils;
 
-        public RoomHandler(BufferedWriter bufferedWriter) {
-            this.utils = new Utils(bufferedWriter);
+    public RoomHandler(BufferedWriter bufferedWriter) {
+        this.utils = new Utils(bufferedWriter);
+    }
+
+    public void createNew(AuthenticationHandler authHandler) throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        String chatRoomName = utils.handleChatRoomName();
+        System.out.println("Creating New Chat Room");
+
+        System.out.println("Enter Chat Room Type");
+        System.out.println("[ 1 ] Public");
+        System.out.println("[ 2 ] Private");
+        System.out.print("Select Option: ");
+        String roomType;
+        String messageToServer;
+        switch (roomType = scanner.nextLine()) {
+            case "1":
+                messageToServer = "CRIAR_SALA " + "PUBLICA " + chatRoomName;
+                authHandler.encryptedMessage(messageToServer);
+                break;
+
+            case "2":
+                String password = utils.handlePassword();
+                password = utils.handlePasswordSHA256(password);
+                messageToServer = "CRIAR_SALA " + "PRIVADA " + chatRoomName + " " + password;
+                authHandler.encryptedMessage(messageToServer);
+
+                break;
+            default:
+                System.out.println("Invalid option. Please try again.");
         }
-        
-        public void createNew(AuthenticationHandler authHandler) throws IOException {
-            Scanner scanner = new Scanner(System.in);
-            String chatRoomName = utils.handleChatRoomName();   
-            System.out.println("Creating New Chat Room");
-            
-            System.out.println("Enter Chat Room Type");
-            System.out.println("[ 1 ] Public");
-            System.out.println("[ 2 ] Private");
-            System.out.print("Select Option: ");
-            String roomType;
-            String messageToServer;
-            switch (roomType = scanner.nextLine()) {
-                case "1":
-                    messageToServer = "CRIAR_SALA " + "PUBLICA " + chatRoomName;
-                    authHandler.encryptedMessage(messageToServer);
-                    break;
-
-                case "2":
-                    String password = utils.handlePassword();
-                    password = utils.handlePasswordSHA256(password);
-                    messageToServer = "CRIAR_SALA " + "PRIVADA " + chatRoomName + " " + password;
-                    authHandler.encryptedMessage(messageToServer);
-
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again.");
-            }
 
     }
 
@@ -48,8 +48,9 @@ public class RoomHandler {
         String chatRoomName = utils.handleChatRoomName();
 
         String password = utils.handlePasswordEnterRoom();
-
-        password = utils.handlePasswordSHA256(password);
+        if (!(password.trim().isEmpty())) {
+            password = utils.handlePasswordSHA256(password);
+        }
 
         String messageToServer = "ENTRAR_SALA " + chatRoomName + " " + password;
         authHandler.encryptedMessage(messageToServer);
@@ -63,7 +64,7 @@ public class RoomHandler {
     public void exitChatRoom(AuthenticationHandler authHandler) throws IOException {
         System.out.println("Exit Chat Room...");
         String chatRoomName = utils.handleChatRoomName();
-        
+
         String messageToServer = "SAIR_SALA " + chatRoomName;
         authHandler.encryptedMessage(messageToServer);
     }
@@ -94,7 +95,6 @@ public class RoomHandler {
         authHandler.encryptedMessage(messageToServer);
     }
 
-    
     public void interrupt(AuthenticationHandler authHandler, String username) throws IOException {
         String messageToServer = "INTERRUPTION " + username;
         authHandler.encryptedMessage(messageToServer);
