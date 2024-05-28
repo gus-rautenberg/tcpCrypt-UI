@@ -160,10 +160,10 @@ public class Client {
                         String messageFromServer;
                         messageFromServer = bufferedReader.readLine();
                         String[] words = messageFromServer.split(" ");
-                        for (int i = 0; i < words.length; i++) {
+                        // for (int i = 0; i < words.length; i++) {
 
-                            System.out.println("words[" + i + "]: " + words[i]);
-                        }
+                        // System.out.println("words[" + i + "]: " + words[i]);
+                        // }
                         if (crypto == false) {
                             // System.out.println("nao esntra aqui no crypto");
                             if (words[0].equals("REGISTRO_OK")) {
@@ -222,7 +222,7 @@ public class Client {
     }
 
     public static void main(String[] args) throws IOException {
-        Socket clientSocket = new Socket("10.81.184.143", 8080);
+        Socket clientSocket = new Socket("localhost", 8080);
         Client client = new Client(clientSocket);
         client.listenForMessage();
         client.clientFunction();
